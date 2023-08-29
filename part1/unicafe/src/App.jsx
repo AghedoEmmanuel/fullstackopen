@@ -5,16 +5,6 @@ const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>{text}</button>
 )
 
-// const StatisticLine = ({ value, text }) => {
-//   if (value === 0) {
-//     return null
-//   }
-//   return (
-//     <tr>
-//       <td>{text}</td> <td>{value}</td>
-//     </tr>
-//   )
-// }
 const StatisticLine = ({ value, text }) => (
     <tr>
       <td>{text}</td> <td>{value}</td>
