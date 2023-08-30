@@ -1,11 +1,11 @@
 import { useState } from 'react'
 
-const Button = ({handleClick, text}) => (
+const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>{text}</button>
 )
 
 function App() {
-  
+
   const anecdotes = [
     'If it hurts, do it more often.',
     'Adding manpower to a late software project makes it later!',
@@ -18,15 +18,42 @@ function App() {
   ]
 
   const [selected, setSelected] = useState(0)
+  const [vote, setVote] = useState(new Array(anecdotes.length).fill(0))
+  const [show, setShow] = useState(false)
 
-  const next =() =>{
-    setSelected((selected +1) % anecdotes.length )
+  const next = () => {
+    setSelected((selected + 1) % anecdotes.length)
   }
+
+  const count = () => {
+    const newVote = [...vote]
+    newVote[selected] += 1
+    setVote(newVote)
+    setShow(true)
+  }
+
+  const maxVote = Math.max(...vote)
+  const mostVotedIndex = vote.indexOf(maxVote)
 
   return (
     <>
-       {anecdotes[selected]} <br/> <br/>
-       <Button handleClick={next} text='next anecdotes' />
+      <h1>Anecdotes of the day</h1>
+      {anecdotes[selected]}
+      <p>has {vote[selected]} votes</p>
+      <Button handleClick={count} text='Vote' />
+      <Button handleClick={next} text='next anecdotes' />
+
+      <h1>Anecdotes with the most votes</h1>
+      {show ? (
+        <>
+          {anecdotes[mostVotedIndex]}
+          <p>has {maxVote} votes</p>
+        </>
+      ) :
+        <>
+          <p>no vote given</p>
+        </>
+      }
     </>
   )
 }
