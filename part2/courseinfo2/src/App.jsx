@@ -73,11 +73,9 @@ function App() {
       }
     ],
   }
-
   return (
   <>
   <Course course={course}/>
-
   </>
   )
 }
