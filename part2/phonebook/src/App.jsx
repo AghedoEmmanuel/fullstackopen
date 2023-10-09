@@ -1,18 +1,20 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Filter from './component/Filter'
 import PersonForm from './component/personForm'
 import Persons from './component/Persons'
+import axios from 'axios'
 
 
 function App() {
 
-  const [persons, setPersons] = useState([
-    { name: 'Artos Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ])
+  // const [persons, setPersons] = useState([
+  //   { name: 'Artos Hellas', number: '040-123456', id: 1 },
+  //   { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+  //   { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+  //   { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
+  // ])
 
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
@@ -40,6 +42,19 @@ function App() {
   const filteredPersons = persons.filter((person) =>
   person.name.toLowerCase().includes(filter.toLowerCase())
 );
+
+// const promise = axios.get('http://localhost:3001/persons')
+// promise.then(response =>{
+//   console.log(response.data)
+// })
+
+useEffect(()=>{
+  axios
+  .get('http://localhost:3001/persons')
+  .then(response =>{
+    setPersons(response.data)
+  })
+},[])
 
   return (
     <>
