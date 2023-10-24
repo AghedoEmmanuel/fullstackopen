@@ -1,4 +1,3 @@
-import { useState } from "react"
 
 const PersonForm = ({ addPerson,newName, setNewName, newNumber, setNewNumber  }) => {
 
@@ -14,6 +13,7 @@ const PersonForm = ({ addPerson,newName, setNewName, newNumber, setNewNumber  })
         e.preventDefault()
           addPerson(newName,newNumber)
       }
+
     return (
         <div>
             <form onSubmit={handleSubmit}>
