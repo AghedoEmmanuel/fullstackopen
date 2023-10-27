@@ -5,8 +5,8 @@ const get = () =>{
     return  axios
     .get(baseURL) 
     .then(response => response.data)
-    .catch(error =>{
-        alert(`S{baseURL} is not sending any information`)
+    .catch(() =>{
+        alert(`${baseURL} is not sending any information`)
     })
 }
 
@@ -18,13 +18,17 @@ const create = (newPersons,setPersons) =>{
         return response.data
     })
     .catch (error =>{
-        alert('An Error occured:',error)
+        console.log('An Error occured:',error)
         throw error
     })
 }
 
-const update = (id,newPersons) =>{
-    return axios.put(`${baseURL}/${id}`,newPersons)
+const update = (id,updatedPersons) =>{
+    return axios
+    .put(`${baseURL}/${id}`,updatedPersons)
+    .then((response) =>{
+        response.data
+    })
 }
 
 const remove = (id, setPersons) =>{

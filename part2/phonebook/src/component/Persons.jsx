@@ -6,8 +6,8 @@ const Persons = ({persons, setPersons}) => {
 //   }
   return (
     <div>
-    {persons.map(person => (<p key={person.id}>{person.name} {person.number} 
-    <Delete id={person.id} setPersons={setPersons}/></p>))}
+    {persons.map(person => (<div key={person.id}>{person.name} {person.number} 
+    <Delete id={person.id} setPersons={setPersons}/></div>))}
     </div>
   )
 }
