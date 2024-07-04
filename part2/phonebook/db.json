@@ -2,7 +2,7 @@
   "persons": [
     {
       "name": "Arto Hellas",
-      "number": "060-789567",
+      "number": "040-123456",
       "id": 1
     },
     {
@@ -21,24 +21,10 @@
       "id": 4
     },
     {
-      "name": "central cee",
-      "number": "987-234056",
+      "name": "kehlanis",
+      "number": "67-89234",
       "important": true,
       "id": 5
-    },
-    {
-      "name": "billy",
-      "number": "567-874956",
-      "important": false,
-      "key": 1,
-      "id": 6
-    },
-    {
-      "name": "saul",
-      "number": "962-567208",
-      "important": false,
-      "key": 1,
-      "id": 7
     }
   ]
 }

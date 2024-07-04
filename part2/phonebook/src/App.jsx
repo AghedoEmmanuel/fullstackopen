@@ -1,88 +1,102 @@
-import { useState, useEffect } from "react";
-import Filter from "./component/Filter";
-import PersonForm from "./component/personForm";
-import Persons from "./component/Persons";
-import phoneBook from "./services/phoneBook";
+import { useState, useEffect } from "react"
+import {Filter, Person, PersonForm} from './Components'
+import PhoneBook from "./services/phoneBook"
 
-function App() {
-  const [persons, setPersons] = useState([]);
-  const [newName, setNewName] = useState("");
-  const [newNumber, setNewNumber] = useState("");
-  const [filter, setFilter] = useState("");
-  const [keyCounter, setKeyCounter] = useState(1);
+const App = () => {
 
-  const addPerson = (name, number) => {
-    const existingPerson = persons.find((person) => person.name === name);
-    if (existingPerson) {
-      const updatePerson = { ...existingPerson, number };
+  const [persons,setPersons] = useState([])
+  const [newName, setNewName] = useState('')
+  const[newNumber,setNewNumber] = useState('')
+  const [filteredName, setFilteredName] = useState('')
 
-      const confirm = window.confirm(
-        `${name} is already added to the phonebook, replace the old number with a new number`
-      );
+  const handleNameChange=(e)=>{
+    setNewName(e.target.value)
+  }
 
-      if (confirm) {
-        phoneBook.update(existingPerson.id, updatePerson).then((data) => {
-          setPersons((prevperson) => {
-            prevperson.map((person) => (person.id === data.id ? data : person));
-          });
-          window.location.reload();
-        });
-      } else {
-        alert("Phone number change cancelled");
-      }
-    } else {
-      const newPersons = {
-        name,
-        number,
-        important: Math.random() < 0.5,
-        key: keyCounter,
-      };
-      setPersons([...persons, newPersons]);
-      setNewName("");
-      setNewNumber("");
-      setKeyCounter(keyCounter + 1);
-      phoneBook.create(newPersons).then((data) => {
-        setPersons([...persons, data]);
-        // console.log(data);
-      });
+  const handleNumberChange=(e)=>{
+    setNewNumber(e.target.value)
+  }
+
+  const handleFilteredName=(e)=>{
+    setFilteredName(e.target.value)
+  }
+
+
+  useEffect(()=>{
+    PhoneBook
+    .get()
+    .then(InitialPersons =>setPersons(InitialPersons))
+  },[])
+
+  const addName = (e)=>{
+    e.preventDefault()
+    const personObject = {
+      name:newName,
+      number:newNumber,
+      important:Math.random()<0.5,
+      id:persons.length + 1,
     }
-  };
+    const existingPerson = persons.find(person=>person.name.toLowerCase() === newName.toLowerCase())
 
-  const handleFilterChange = (e) => {
-    setFilter(e.target.value);
-  };
+    if(existingPerson){
+    
+    if (window.confirm(`${newName} is already added to phonebook, do you want to replace the old number with a new number?`)){
+       PhoneBook
+       .update(existingPerson.id,{...existingPerson, number:newNumber})
+       .then(response=>{
+        setPersons(persons.map(person=>person.id !== existingPerson.id ? person :response.data))
+       })
+       .catch(error =>{
+        console.error('Error updating person',error)
+       })
+    }else{
+      PhoneBook
+      .create(personObject)
+      .then(returnedPerson=>{
+        setPersons(persons.concat(returnedPerson))
+      })
+    }
+    setNewName('')
+    setNewNumber('')
+  }}
 
-  const filteredPersons = persons.filter((person) =>
-    person.name.toLowerCase().includes(filter.toLowerCase())
-  );
+  const deleteInfo = (id) =>{
+   if(window.confirm(`Delete ${setPersons}`)){
+    PhoneBook
+    .remove(id)
+    .then(()=>{
+      setPersons(persons.filter(person=>person.id !== id))
+    })
+    .catch(error => {
+      console.error('Error Occured while deleting file:',error)
+    })
+   }
+  }
 
-  // const promise = phoneBook.get()
-  // promise.then(data =>{
-  //   console.log(data)
-  // })
-
-  useEffect(() => {
-    phoneBook.get().then((data) => {
-      setPersons(data);
-    });
-  }, []);
+  const filteredPersons = persons.filter(person=>person.name.toLowerCase().includes(filteredName.toLowerCase()))
 
   return (
-    <>
-      <h2>Phonebook</h2>
-      <Filter handleFilterChange={handleFilterChange} />
-      <h2>add a new</h2>
-      <PersonForm
-        addPerson={addPerson}
-        newName={newName}
-        setNewName={setNewName}
-        newNumber={newNumber}
-        setNewNumber={setNewNumber}
-      />
-      <h2>Numbers</h2>
-      <Persons persons={filteredPersons} />
-    </>
-  );
+    <div>
+    
+       <h2>PhoneBook</h2>
+   <Filter 
+    filteredName={filteredName}
+    handleFilteredName={handleFilteredName}
+   />
+    <h3>add a new</h3>
+
+   <PersonForm 
+   newName={newName} 
+   handleNameChange={handleNameChange} 
+   handleNumberChange={handleNumberChange} 
+   newNumber={newNumber} 
+   addName={addName}/>
+
+    <h2>Numbers</h2>
+   <Person filteredPersons={filteredPersons} deleteInfo={deleteInfo}/>
+
+    </div>
+  )
 }
 
-export default App;
+export default App

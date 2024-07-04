@@ -1,15 +1,20 @@
 const express = require("express");
+const morgan = require("morgan");
 const app = express();
 
-app.use(express.json());
+morgan('tiny')
+
+var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+// app.use(morgan(express.json(),{ stream: accessLogStream }));
+app.use(morgan(express.json()));
 
 const date = Date();
 
-const generateId = () =>{
-  const maxId = phonebook.length > 0 
-  ? Math.random(...phonebook.map(n => n.id)) :0
-  return maxId + 1
-}
+const generateId = () => {
+  const maxId =
+    phonebook.length > 0 ? Math.random(...phonebook.map((n) => n.id)) : 0;
+  return maxId + 1;
+};
 
 let phonebook = [
   {
@@ -39,17 +44,17 @@ app.get("/api/persons", (req, res) => {
 });
 
 app.get("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id)
-  const name = phonebook.find(name => 
-    {
+  const id = Number(req.params.id);
+  const name = phonebook.find((name) => {
     // console.log(name.id, typeof name.id, id, typeof id, name.id ==id )
 
-      return name.id===id})
-  console.log(name)
-  if (name){
+    return name.id === id;
+  });
+  console.log(name);
+  if (name) {
     res.json(name);
-  }else{
-    res.status(404).end()
+  } else {
+    res.status(404).end();
   }
 });
 
@@ -59,26 +64,30 @@ app.get("/api/info", (req, res) => {
   res.send(response);
 });
 
-app.post('api/persons', (req,res) =>{
-const body = req.body
+app.post("api/persons", (req, res) => {
+  const body = req.body;
 
-if(!body.content){
-  res.status(400).send({error:"missing content"})
-}
+  if (!body.content || body.content.trim() === "") {
+    res.status(400).send({ error: "missing content" });
+  }
 
-const book = {
-  content:body.content,
-  important:body.important || false,
-  id:generateId()
-}
-phonebook = phonebook.concat(book)
-res.json(phonebook)
-})
+  if (phonebook.some((person) => person.content === body.content)) {
+    res.status(400).send({ error: "Name must be unique" });
+  }
+
+  const person = {
+    content: body.content,
+    important: body.important || false,
+    id: generateId(),
+  };
+  phonebook = phonebook.concat(person);
+  res.json(phonebook);
+});
 
 app.delete("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id)
-  const name = phonebook.find(name =>  name.id===id)
-  res.status(204).send({error:'Message deleted'})
+  const id = Number(req.params.id);
+  const name = phonebook.find((name) => name.id === id);
+  res.status(204).send({ error: "Message deleted" });
 });
 
 const PORT = 3001;
